@@ -1,6 +1,7 @@
 package Week8Lab;
 
 
+
 /**
  * Implementation of Quicksort, same as the lecture notes.
  * Use first element as pivot.
@@ -28,12 +29,17 @@ public class QuickSort extends SortAlgorithm
      * @param leftIndex The rightmost position to sort to (inclusive).
      */
     protected void sort(int[] array, int leftIndex, int rightIndex) {
-		// IMPLEMENT ME
-    	//check if leftIndex < rightIndex, otherwise only single elements
-    		//call partition method on array, leftIndex,rightIndex
-    	// if split index +1 is less than rightIndex
-    		//recursively call sort on right partition
-    	
+        if (leftIndex < rightIndex) {
+            int split = partition(array, leftIndex, rightIndex);
+
+            // sort each partition
+            if (split -1 > leftIndex) {
+            	sort(array, leftIndex, split-1);
+            }
+            if (split + 1 < rightIndex) {
+            	sort(array, split+1, rightIndex);
+            }
+        }
     } // end of sort()
 
 
@@ -44,28 +50,76 @@ public class QuickSort extends SortAlgorithm
      * @param leftIndex The leftmost position to sort from (inclusive).
      * @param leftIndex The rightmost position to sort to (inclusive).
      *
-     * @return Index of array where the pivot is placed into.
+     * @return Index where pivot is placed.
      */
     protected int partition(int[] array, int leftIndex, int rightIndex) {
-		// IMPLEMENT ME
-    		//simple implementation
-    		//set pivot as leftIndex element
-    		// set i = leftIndex and j = rightIndex + 1
-    		// while i <= j
-    			//while i element less than pivot and i less than rightIndex
-    			//increment i
-    			// while j element greater than pivot
-    				//decrement j
-    			//swap i element with j element
-    	
-    	//swap i element with j element
-    	
-    	//swap pivot element with j element
-    	
-    	//return j
-    	
-		// DUMMY return value
-		return -1;
+        // pivot is at first element
+        int pivot = array[leftIndex];
+        int i = leftIndex + 1;
+        int j = rightIndex;
+
+        while (i <= j) {
+        	while (array[i] < pivot && i < rightIndex) {
+                i++;
+            }
+        	while (array[j] > pivot) {
+                j--;
+            }
+
+            // swap array[i] and array[j], which are in the incorrect partitions
+            // with respect to the pivot
+        	if (i <= j) {
+        		swap(array, i, j);
+        		i++;
+        	}
+        }
+
+        // swap pivot into its correct position in array
+        swap(array, leftIndex, j);
+
+        return j;
     } // end of partition()
+
+
+    /**
+     * Median of three.
+     *
+     * @param array Array to take median form.
+     * @param leftIndex The leftmost position to take median from (inclusive).
+     * @param leftIndex The rightmost position to take median from (inclusive).
+     */
+    protected void medianPivot(int[] array, int leftIndex, int rightIndex) {
+    	if (rightIndex - leftIndex < 3) {
+    		return;
+    	}
+
+    	int midIndex = (int) Math.floor((rightIndex + leftIndex) / 2);
+
+    	// find median
+    	int medianIndex;
+    	if (array[leftIndex] <= array[midIndex]) {
+    		if (array[midIndex] <= array[rightIndex]) {
+    			medianIndex = midIndex;
+    		}
+    		else if (array[leftIndex] <= array[rightIndex]) {
+    			medianIndex = rightIndex;
+    		}
+    		else {
+    			medianIndex = leftIndex;
+    		}
+    	}
+    	else if (array[leftIndex] <= array[rightIndex]) {
+    		medianIndex = leftIndex;
+    	}
+    	else if (array[midIndex] <= array[rightIndex]) {
+    		medianIndex = rightIndex;
+    	}
+    	else {
+    		medianIndex = midIndex;
+    	}
+
+    	// move median to array[leftIndex], which will become the pivot.
+    	swap(array, medianIndex, leftIndex);
+    } // end of medianPivot()
 
 } // end of class QuickSort
